@@ -1,14 +1,14 @@
 /**
  * 注册命名空间
  */
-baidu.namespace.register("baidu.doctype");
+baidu.namespace.register('baidu.doctype');
 
 /**
  * 计算documentMode
  * @author zhaoxianlie 
  */
-baidu.doctype = (function(){
-	var documentMode = {
+baidu.doctype = (function() {
+  var documentMode = {
 	    //在未定义DTD的时候，浏览器默认将以混杂模式进行渲染
 	    IE: 'Q',
 	    WebKit: 'Q',
@@ -20,7 +20,7 @@ baidu.doctype = (function(){
 	    isUnusualDocType: false,
 	    // 是否有DTD
 	    hasDocType: false
-	};
+  };
 
 	/**
 	 * <!DOCTYPE "xmlns:xsl='http://www.w3.org/1999/XSL/Transform'">
@@ -30,7 +30,7 @@ baidu.doctype = (function(){
 	 * @param {string} publicId 值为：document.doctype.publicId
 	 * @param {string} systemId 值为：document.doctype.systemId
 	 */
-	function fixDocTypeOfNASA(name, publicId, systemId){
+  function fixDocTypeOfNASA(name, publicId, systemId) {
 	    if (name.toLowerCase() == "\"xmlns:xsl='http://www.w3.org/1999/xsl/transform'\"" &&
 	    publicId == '' &&
 	    systemId == '') {
@@ -38,44 +38,44 @@ baidu.doctype = (function(){
 	        documentMode.WebKit = 'Q';
 	        documentMode.isUnusualDocType = false;
 	    }
-	}
+  }
 	
 	/**
 	 * 判断一个Comment是否为IE的条件注释
 	 * @param {string} Comment内容
 	 */
-	function isConditionalComment(nodeValue){
+  function isConditionalComment(nodeValue) {
 	    return CONDITIONAL_COMMENT_REGEXP.test(nodeValue);
-	}
+  }
 	
 	/**
 	 * 判断一个Comment内容是否为非IE的注释
 	 * @param {string} Comment内容
 	 */
-	function isNotIEHiddenConditionalComment(nodeValue){
+  function isNotIEHiddenConditionalComment(nodeValue) {
 	    return NOT_IE_HIDDEN_CONDITIONAL_COMMENT_REGEXP.test(nodeValue);
-	}
+  }
 	
 	/**
 	 * 判断一个Comment是否为注释的结束部分
 	 * @param {string} Comment内容
 	 */
-	function isRevealedClosingConditionalComment(nodeValue){
+  function isRevealedClosingConditionalComment(nodeValue) {
 	    return REVEALED_CLOSING_CONDITIONAL_COMMENT_REGEXP.test(nodeValue);
-	}
+  }
 	
 	/**
 	 * 判断一个Comment是否为非IE注释的开始
 	 * @param {string} Comment内容
 	 */
-	function isNotIERevealedOpeningConditionalComment(nodeValue){
+  function isNotIERevealedOpeningConditionalComment(nodeValue) {
 	    return NOT_IE_REVEALED_OPENING_CONDITIONAL_COMMENT_REGEXP.test(nodeValue);
-	}
+  }
 	
 	/**
 	 * 试图在某个Comment前面找到一个非IE注释的开始
 	 */
-	function getPreviousRevealedOpeningConditionalComment(node){
+  function getPreviousRevealedOpeningConditionalComment(node) {
 	    var prev = node.previousSibling;
 	    for (; prev; prev = prev.previousSibling) {
 	        if (isNotIERevealedOpeningConditionalComment(prev.nodeValue)) {
@@ -83,12 +83,12 @@ baidu.doctype = (function(){
 	        }
 	    }
 	    return null;
-	}
+  }
 	
 	/**
 	 * 检测文档头DTD前面是否有注释
 	 */
-	function checkForCommentBeforeDTD(){
+  function checkForCommentBeforeDTD() {
 	    var result = {
 	        hasCommentBeforeDTD: false,
 	        hasConditionalCommentBeforeDTD: false
@@ -96,7 +96,7 @@ baidu.doctype = (function(){
 	    var doctype = document.doctype;
 	    if (!doctype) {
 	        return result;
-		}
+    }
 	    
 		//从<html>向上搜索，进行检测
 	    var prev = doctype.previousSibling;
@@ -126,20 +126,20 @@ baidu.doctype = (function(){
 	        }
 	    }
 	    return result;
-	}
+  }
 	
 	/**
 	 * 开始进行文档类型的侦测
 	 */
-	function processDoctypeDetectionResult(){
+  function processDoctypeDetectionResult() {
 		//获取doctype
 	    var doctype = document.doctype;
 		
 	    var compatMode = document.compatMode.toLowerCase();
-	    documentMode.hasDocType = (doctype) ? true : false;
+	    documentMode.hasDocType = doctype ? true : false;
 	    
 		// 如果页面是以混杂模式渲染的，则compatMode为BackCompat
-	    documentMode.WebKit = (compatMode == 'backcompat') ? 'Q' : 'S';
+	    documentMode.WebKit = compatMode == 'backcompat' ? 'Q' : 'S';
 	    documentMode.IE = documentMode.WebKit;
 		
 	    // 如果文档压根儿就没有写doctype，则不需要继续侦测了
@@ -170,8 +170,8 @@ baidu.doctype = (function(){
 	    }
 	    
 		// 对documentMode进行修正判断
-	    if ((publicId in COMPAT_MODE_DIFF_PUBLIC_ID_MAP) &&
-	    (systemId in COMPAT_MODE_DIFF_PUBLIC_ID_MAP[publicId].systemIds)) {
+	    if (publicId in COMPAT_MODE_DIFF_PUBLIC_ID_MAP &&
+	    systemId in COMPAT_MODE_DIFF_PUBLIC_ID_MAP[publicId].systemIds) {
 	        documentMode.IE = COMPAT_MODE_DIFF_PUBLIC_ID_MAP[publicId].systemIds[systemId].IE;
 	        documentMode.isUnusualDocType = false;
 	    }
@@ -185,8 +185,7 @@ baidu.doctype = (function(){
 	        if (result.hasConditionalCommentBeforeDTD) {
 	            documentMode.IE = undefined;
 	            documentMode.hasConditionalCommentBeforeDTD = true;
-	        }
-	        else 
+	        }	        else 
 	            if (result.hasCommentBeforeDTD) {
 	                // IE6					DTD 前的任何非空白符都将使浏览器忽略 DTD，包括注释和 XML 声明。
 					//IE7 IE8				DTD 前的任何非空白符都将使浏览器忽略 DTD，包括注释，但不包括 XML 声明。
@@ -196,16 +195,16 @@ baidu.doctype = (function(){
 	                documentMode.hasCommentBeforeDTD = true;
 	            }
 	    }
-	}
+  }
 	
 	/**
 	 * 对外公开调用接口
 	 */
-	return {
-		getDocMode : function(){
+  return {
+    getDocMode : function() {
 			//检测documentMode
-			processDoctypeDetectionResult();
-			return documentMode;
-		}
-	} 
+      processDoctypeDetectionResult();
+      return documentMode;
+    }
+  }; 
 })();

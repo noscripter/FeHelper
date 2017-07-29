@@ -57,80 +57,80 @@ FeHelper.elemTool = {
  Empty Patteren:
           elemTool.elm('div',{},[],document.body);
 *******************************************************************************/
-	elm : function(nodeType,attributes,addchilds,appnedTo){
-		var ne=document.createElement(nodeType),i,l;
-		if(attributes){
-			if( attributes.event || attributes.events ){
-				var lev=attributes.event || attributes.events;
-				if(typeof(lev[0])=='string') ne.addEventListener(lev[0],lev[1],lev[2]);
-				else if(lev.length)
-					for(i=0,l=lev.length;i<l;i++)
-						ne.addEventListener(lev[i][0],lev[i][1],lev[i][2]);
-			}
-		}
-		for( i in attributes ){
-			if( i.substring(0,5) == 'event' ){
+  elm : function(nodeType, attributes, addchilds, appnedTo) {
+    var ne = document.createElement(nodeType), i, l;
+    if (attributes) {
+      if ( attributes.event || attributes.events ) {
+        var lev = attributes.event || attributes.events;
+        if (typeof lev[0] == 'string') ne.addEventListener(lev[0], lev[1], lev[2]);
+        else if (lev.length)
+          for (i = 0, l = lev.length; i < l; i++)
+            ne.addEventListener(lev[i][0], lev[i][1], lev[i][2]);
+      }
+    }
+    for ( i in attributes ) {
+      if ( i.substring(0, 5) == 'event' ) {
 				//handled earlier
-			}else if( i == 'checked' || i == 'selected'){
-				if(attributes[i])ne.setAttribute(i,i);
-			}else ne.setAttribute(i,attributes[i]);
-		}
-		if(addchilds){
-			for( i=0,l=addchilds.length;i<l;i++ ){
-				if(addchilds[i])ne.appendChild(addchilds[i]);//you probably forgot a comma when calling the function
-			}
-		}
-		if(appnedTo){
-			this.insertNode(ne, appnedTo);
-		}
+      } else if ( i == 'checked' || i == 'selected') {
+        if (attributes[i])ne.setAttribute(i, i);
+      } else ne.setAttribute(i, attributes[i]);
+    }
+    if (addchilds) {
+      for ( i = 0, l = addchilds.length; i < l; i++ ) {
+        if (addchilds[i])ne.appendChild(addchilds[i]);//you probably forgot a comma when calling the function
+      }
+    }
+    if (appnedTo) {
+      this.insertNode(ne, appnedTo);
+    }
 	
-		return ne;//identifier unexpected error pointing here means you're missing a comma on the row before inside an array of nodes addchilds
-	},
+    return ne;//identifier unexpected error pointing here means you're missing a comma on the row before inside an array of nodes addchilds
+  },
 	/*elemTool.txt creates text nodes, does not support HTML entiteis */
-	txt : function(textContent){
-		return document.createTextNode(textContent);
-	},
+  txt : function(textContent) {
+    return document.createTextNode(textContent);
+  },
 	/*elemTool.ent creates text nodes that may or may not contain HTML entities.  From a
 	single entity to many entities interspersed with text are all supported by this */
-	ent : function(textContent){
-		return document.createTextNode(this.unescapeHtml(textContent));
-	},
+  ent : function(textContent) {
+    return document.createTextNode(this.unescapeHtml(textContent));
+  },
 	/*elemTool.paragraphs creates an array of nodes that may or may not contain HTML entities.*/
-	paragraphs : function(textContent){
-		var textPieces=textContent.split("\n");
-		var elmArray=[];
-		for(var i=0,l=textPieces.length;i<l;i++){
-			elmArray.push(elemTool.elm('p',{},[elemTool.ent(textPieces[i])]));
-		}
-		return elmArray;
-	},
-	insertNode : function(newNode, parentElem, optionalInsertBefore){
-		if(!parentElem)parentElem=document.body;
-		if(optionalInsertBefore && optionalInsertBefore.parentNode == parentElem){
-			parentElem.insertBefore(newNode,optionalInsertBefore);
-		}else{
-			parentElem.appendChild(newNode);
-		}
-	},
-	insertNodes : function(newNodes, parentElem, optionalInsertBefore){
-		if(typeof(newNodes)!='array')
-			this.insertNode(newNodes, parentElem, optionalInsertBefore);
-		else{
-			for(var i=0,l=newNodes.length;i<l;i++){
-				this.insertNode(newNodes[i], parentElem, optionalInsertBefore, true);
-			}
-		}
-	},
-	empty : function(node){
-		while(node.lastChild)node.removeChild(node.lastChild);
-	},
-	unescapeHtml : function(str) { //trick used to make HTMLentiites work inside textNodes
-		if(str.length < 1)return str;
-		var temp = document.createElement("div");
-		str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
-		temp.innerHTML = str;
-		var result = temp.childNodes[0].nodeValue;
-		this.empty(temp);
-		return result;
-	}
-}
+  paragraphs : function(textContent) {
+    var textPieces = textContent.split('\n');
+    var elmArray = [];
+    for (var i = 0, l = textPieces.length; i < l; i++) {
+      elmArray.push(elemTool.elm('p', {}, [elemTool.ent(textPieces[i])]));
+    }
+    return elmArray;
+  },
+  insertNode : function(newNode, parentElem, optionalInsertBefore) {
+    if (!parentElem)parentElem = document.body;
+    if (optionalInsertBefore && optionalInsertBefore.parentNode == parentElem) {
+      parentElem.insertBefore(newNode, optionalInsertBefore);
+    } else {
+      parentElem.appendChild(newNode);
+    }
+  },
+  insertNodes : function(newNodes, parentElem, optionalInsertBefore) {
+    if (typeof newNodes != 'array')
+      this.insertNode(newNodes, parentElem, optionalInsertBefore);
+    else {
+      for (var i = 0, l = newNodes.length; i < l; i++) {
+        this.insertNode(newNodes[i], parentElem, optionalInsertBefore, true);
+      }
+    }
+  },
+  empty : function(node) {
+    while (node.lastChild)node.removeChild(node.lastChild);
+  },
+  unescapeHtml : function(str) { //trick used to make HTMLentiites work inside textNodes
+    if (str.length < 1) return str;
+    var temp = document.createElement('div');
+    str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+    temp.innerHTML = str;
+    var result = temp.childNodes[0].nodeValue;
+    this.empty(temp);
+    return result;
+  }
+};
